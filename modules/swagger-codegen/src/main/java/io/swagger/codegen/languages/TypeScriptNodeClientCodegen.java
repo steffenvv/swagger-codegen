@@ -80,7 +80,7 @@ public class TypeScriptNodeClientCodegen extends AbstractTypeScriptClientCodegen
         supportingFiles.add(new SupportingFile("tsconfig.mustache", getPackageRootDirectory(), "tsconfig.json"));
     }
 
-    private String getPackageRootDirectory() {
+    protected String getPackageRootDirectory() {
         String indexPackage = modelPackage.substring(0, Math.max(0, modelPackage.lastIndexOf('.')));
         return indexPackage.replace('.', File.separatorChar);
     }

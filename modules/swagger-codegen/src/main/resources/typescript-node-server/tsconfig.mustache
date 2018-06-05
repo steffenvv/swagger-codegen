@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "{{#supportsES6}}ES6{{/supportsES6}}{{^supportsES6}}ES5{{/supportsES6}}",
+        "strict": true,
+        "moduleResolution": "node",
+        "removeComments": true,
+        "sourceMap": true,
+        "declaration": true,
+        "noImplicitAny": false,
+        "lib": ["es5", "es6"],
+        "outDir": "lib"
+    },
+    "exclude": [
+        "node_modules",
+        "lib"
+    ]
+}

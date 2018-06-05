@@ -1,0 +1,52 @@
+export type ResponseData<Payload> =
+    | {
+          readonly kind: "Success";
+          readonly payload: Payload;
+          readonly code?: number;
+      }
+    | {
+          readonly kind: "Error";
+          readonly error?: string;
+          readonly code?: number;
+      };
+
+export function makeResponseDataFromError(ex: any): ResponseData<any> {
+    let error: string | undefined = undefined;
+    let code: number | undefined = undefined;
+
+    if (typeof ex === "string") {
+        error = ex;
+    } else if (typeof ex.message === "string") {
+        error = ex.message;
+    }
+
+    if (typeof ex.code === "number") {
+        code = ex.code;
+    }
+
+    return { kind: "Error", error, code };
+}
+
+export function writeJson<T>(response: any, responseData: ResponseData<T>) {
+    let payload: string;
+    let code: number;
+
+    if (responseData.kind === "Success") {
+        code = responseData.code || 200;
+        if (typeof responseData.payload === "string") {
+            payload = responseData.payload;
+        } else {
+            payload = JSON.stringify(responseData.payload, null, 2);
+        }
+    } else {
+        code = responseData.code || 500;
+        if (responseData.error) {
+            payload = JSON.stringify({ error: responseData.error });
+        } else {
+            payload = "";
+        }
+    }
+
+    response.writeHead(code, { "Content-Type": "application/json" });
+    response.end(payload);
+}

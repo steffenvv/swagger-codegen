@@ -1,0 +1,22 @@
+{{#apiInfo}}
+{{#apis}}
+import { {{classname}}Service } from "../models";
+{{/apis}}
+{{/apiInfo}}
+
+function makeGetterAndSetter<T>() {
+    let service: T | undefined = undefined;
+
+    const getter = () => service;
+    const setter = (newService: T) => {
+        service = newService;
+    };
+
+    return { getter, setter };
+}
+
+{{#apiInfo}}
+{{#apis}}
+export const { getter: get{{classname}}Service, setter: set{{classname}}Service } = makeGetterAndSetter<{{classname}}Service>();
+{{/apis}}
+{{/apiInfo}}

@@ -1,0 +1,29 @@
+import { makeResponseDataFromError, writeJson } from "../utils/writer";
+import { SwaggerRouter20HandlerFunction } from "swagger-tools";
+import { get{{classname}}Service } from "../services";
+{{#operations}}
+{{#operation}}
+
+export const {{{operationId}}}: SwaggerRouter20HandlerFunction = (req, res, next) => { 
+	const service = get{{classname}}Service(); 
+    if (!service) {
+        writeJson(res, { kind: "Error", error: "Service not implemented", code: 501 });
+        return;
+    }
+
+    const parameters = {
+    {{#allParams}}
+  	    {{paramName}}: req.swagger.params["{{baseName}}"].value{{#hasMore}},{{/hasMore}} 	
+    {{/allParams}}
+    };
+  
+    service.{{{operationId}}}(parameters)
+        .then(payload => {
+            writeJson(res, { kind: "Success", payload, code: 200 });
+        })
+        .catch(error => {
+            writeJson(res, makeResponseDataFromError(error));
+        });
+};
+{{/operation}}
+{{/operations}}
