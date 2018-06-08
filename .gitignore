@@ -58,6 +58,9 @@ samples/client/petstore/qt5cpp/PetStore/PetStore
 samples/client/petstore/qt5cpp/PetStore/Makefile
 samples/client/petstore/qt5cpp/PetStore/PetStore.pro.user
 
+# Groovy
+samples/client/petstore/groovy/bin/
+
 #Java/Android
 **/.gradle
 samples/client/petstore/java/hello.txt
@@ -82,6 +85,15 @@ samples/client/petstore/scala/build/
 samples/client/petstore/java/resttemplate/hello.txt
 samples/client/petstore/java/retrofit2/hello.txt
 samples/client/petstore/java/feign/hello.txt
+
+# Kotlin
+samples/client/petstore/kotlin-string/bin/
+samples/client/petstore/kotlin-threetenbp/bin/
+samples/client/petstore/kotlin/bin/
+
+# NancyFx
+samples/server/petstore/nancyfx-async/src/IO.Swagger/obj/
+samples/server/petstore/nancyfx/src/IO.Swagger/obj/
 
 #PHP
 samples/client/petstore/php/SwaggerClient-php/composer.lock
@@ -111,6 +123,10 @@ samples/client/petstore/objc/core-data/SwaggerClientTests/Build
 samples/client/petstore/objc/core-data/SwaggerClientTests/Pods
 samples/client/petstore/objc/core-data/SwaggerClientTests/SwaggerClient.xcworkspace
 samples/client/petstore/objc/core-data/SwaggerClientTests/Podfile.lock
+
+# Scala
+samples/client/petstore/scala-gatling/bin/
+samples/client/petstore/scala/bin/
 
 # Swift
 samples/client/petstore/swift/**/SwaggerClientTests/SwaggerClient.xcodeproj/xcuserdata
