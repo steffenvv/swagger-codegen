@@ -145,19 +145,21 @@ export class ObjectSerializer {
         }
     }
 
-    public static serialize(data: any, type: string): void {
-        if (data == undefined) {
+    public static serialize(data: any, type: string): any {
+        if (data === undefined) {
             return data;
         } else if (primitives.indexOf(type.toLowerCase()) !== -1) {
             return data;
         } else if (type.lastIndexOf("Array<", 0) === 0) { // string.startsWith pre es6
             let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
-            let transformedData: any[] = [];
-            for (let index in data) {
-                let date = data[index];
-                transformedData.push(ObjectSerializer.serialize(date, subType));
+
+            const transformedData: any[] = [];
+            for (const index of Object.keys(data)) {
+                const datum = data[index];
+                transformedData.push(ObjectSerializer.serialize(datum, subType));
             }
+
             return transformedData;
         } else if (type === "Date") {
             return data.toString();
@@ -165,17 +167,21 @@ export class ObjectSerializer {
             if (enumsMap[type]) {
                 return data;
             }
-            if (!typeMap[type]) { // in case we dont know the type
+
+            if (!typeMap[type]) {
+                // in case we dont know the type
                 return data;
             }
 
             // get the map for the correct type.
-            let attributeTypes = typeMap[type].getAttributeTypeMap();
-            let instance: {[index: string]: any} = {};
-            for (let index in attributeTypes) {
-                let attributeType = attributeTypes[index];
-                instance[attributeType.baseName] = ObjectSerializer.serialize(data[attributeType.name], attributeType.type);
+            const instance: { [index: string]: any } = {};
+            for (const attributeType of typeMap[type].getAttributeTypeMap()) {
+                instance[attributeType.baseName] = ObjectSerializer.serialize(
+                    data[attributeType.name],
+                    attributeType.type
+                );
             }
+
             return instance;
         }
     }
@@ -183,7 +189,7 @@ export class ObjectSerializer {
     public static deserialize(data: any, type: string): any {
         // polymorphism may change the actual type.
         type = ObjectSerializer.findCorrectType(data, type);
-        if (data == undefined) {
+        if (data === undefined) {
             return data;
         } else if (primitives.indexOf(type.toLowerCase()) !== -1) {
             return data;
@@ -191,9 +197,9 @@ export class ObjectSerializer {
             let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
             let transformedData: any[] = [];
-            for (let index in data) {
-                let date = data[index];
-                transformedData.push(ObjectSerializer.deserialize(date, subType));
+            for (const index of Object.keys(data)) {
+                const datum = data[index];
+                transformedData.push(ObjectSerializer.deserialize(datum, subType));
             }
             return transformedData;
         } else if (type === "Date") {
@@ -206,12 +212,15 @@ export class ObjectSerializer {
             if (!typeMap[type]) { // dont know the type
                 return data;
             }
-            let instance = new typeMap[type]();
-            let attributeTypes = typeMap[type].getAttributeTypeMap();
-            for (let index in attributeTypes) {
-                let attributeType = attributeTypes[index];
-                instance[attributeType.name] = ObjectSerializer.deserialize(data[attributeType.baseName], attributeType.type);
+            
+            const instance = new typeMap[type]();
+            for (const attributeType of typeMap[type].getAttributeTypeMap()) {
+                instance[attributeType.name] = ObjectSerializer.deserialize(
+                    data[attributeType.baseName],
+                    attributeType.type
+                );
             }
+
             return instance;
         }
     }
