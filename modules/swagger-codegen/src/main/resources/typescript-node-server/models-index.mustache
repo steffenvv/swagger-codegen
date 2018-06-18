@@ -1,3 +1,5 @@
+export type AttributeTypeMap = Array<{ name: string; baseName: string; type: string }>;
+
 {{#models}}
 {{#model}}
 {{#description}}
@@ -23,7 +25,7 @@ export class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
     {{/discriminator}}
 
     {{^isArrayModel}}
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
+    static attributeTypeMap: AttributeTypeMap = [
         {{#vars}}
         {
             "name": "{{name}}",
@@ -34,7 +36,7 @@ export class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
         {{/vars}}
     ];
 
-    static getAttributeTypeMap() {
+    static getAttributeTypeMap(): AttributeTypeMap {
         {{#parent}}
         return super.getAttributeTypeMap().concat({{classname}}.attributeTypeMap);
         {{/parent}}
