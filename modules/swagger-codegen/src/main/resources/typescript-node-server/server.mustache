@@ -7,13 +7,27 @@ import * as connect from "connect";
 import * as swaggerTools from "swagger-tools";
 import * as jsyaml from "js-yaml";
 
-export function startServer(
-    protocol: "http" | "https",
-    serverPort: number,
-    serverOptions: https.ServerOptions = {}
-): void {
+export interface CommonServerOptions {
+    readonly swaggerUi: string;
+    readonly swaggerUiDir?: string;
+}
+
+export interface HttpsServerOptions extends https.ServerOptions, CommonServerOptions {
+    readonly protocol: "https";
+}
+
+export interface HttpServerOptions extends CommonServerOptions {
+    readonly protocol: "http";
+    readonly serverPort: number;
+}
+
+export type ServerOptions = HttpsServerOptions | HttpServerOptions;
+
+export const defaultOptions: ServerOptions = { protocol: "http", serverPort: 4000, swaggerUi: "/docs" };
+
+export function startServer(options: ServerOptions = defaultOptions): void {
     // swaggerRouter configuration
-    const options = {
+    const routerOptions = {
         swaggerUi: path.join(__dirname, "swagger.json"),
         controllers: path.join(__dirname, "controllers"),
         useStubs: process.env.NODE_ENV === "development" // Conditionally turn on stubs (mock mode)
@@ -34,20 +48,26 @@ export function startServer(
         app.use(middleware.swaggerValidator());
 
         // Route validated requests to appropriate controller
-        app.use(middleware.swaggerRouter(options));
+        app.use(middleware.swaggerRouter(routerOptions));
 
         // Serve the Swagger documents and Swagger UI
-        app.use(middleware.swaggerUi());
+        app.use(middleware.swaggerUi(options));
+
+        const serverPort = options.protocol === "https" ? 443 : options.serverPort;
 
         const listener = () => {
-            console.log(`Your server is listening on port ${serverPort} (${protocol}://localhost:${serverPort})`);
-            console.log(`Swagger-ui is available on ${protocol}://localhost:${serverPort}/docs`);
+            console.log(
+                `Your server is listening on port ${serverPort} (${options.protocol}://localhost:${serverPort})`
+            );
+            console.log(
+                `Swagger UI is available on ${options.protocol}://localhost:${serverPort}/${options.swaggerUi}`
+            );
         };
 
-        if (protocol === "http") {
-            http.createServer(app).listen(serverPort, listener);
+        if (options.protocol === "http") {
+            http.createServer(app).listen(options.serverPort, listener);
         } else {
-            https.createServer(serverOptions, app).listen(listener);
+            https.createServer(options, app).listen(listener);
         }
     });
 }
