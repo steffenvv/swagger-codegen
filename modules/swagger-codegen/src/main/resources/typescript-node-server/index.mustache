@@ -22,7 +22,7 @@ const swaggerDoc = jsyaml.safeLoad(spec);
 const app = connect();
 
 // Initialize the Swagger middleware
-swaggerTools.initializeMiddleware(swaggerDoc, function(middleware) {
+swaggerTools.initializeMiddleware(swaggerDoc, middleware => {
     // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
     app.use(middleware.swaggerMetadata());
 
