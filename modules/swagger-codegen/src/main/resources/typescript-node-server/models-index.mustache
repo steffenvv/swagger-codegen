@@ -113,7 +113,7 @@ const primitives = [
 ];
 
 export class ObjectSerializer {
-    public static findCorrectType(data: any, expectedType: string) {
+    public static findCorrectType(data: any, expectedType: string): string {
         if (data == undefined) {
             return expectedType;
         } else if (primitives.indexOf(expectedType.toLowerCase()) !== -1) {
@@ -143,7 +143,7 @@ export class ObjectSerializer {
         }
     }
 
-    public static serialize(data: any, type: string) {
+    public static serialize(data: any, type: string): void {
         if (data == undefined) {
             return data;
         } else if (primitives.indexOf(type.toLowerCase()) !== -1) {
@@ -178,7 +178,7 @@ export class ObjectSerializer {
         }
     }
 
-    public static deserialize(data: any, type: string) {
+    public static deserialize(data: any, type: string): any {
         // polymorphism may change the actual type.
         type = ObjectSerializer.findCorrectType(data, type);
         if (data == undefined) {
