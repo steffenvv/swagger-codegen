@@ -1,0 +1,53 @@
+import * as fs from "fs";
+import * as path from "path";
+import * as http from "http";
+import * as https from "https";
+
+import * as connect from "connect";
+import * as swaggerTools from "swagger-tools";
+import * as jsyaml from "js-yaml";
+
+export function startServer(
+    protocol: "http" | "https",
+    serverPort: number,
+    serverOptions: https.ServerOptions = {}
+): void {
+    // swaggerRouter configuration
+    const options = {
+        swaggerUi: path.join(__dirname, "swagger.json"),
+        controllers: path.join(__dirname, "controllers"),
+        useStubs: process.env.NODE_ENV === "development" // Conditionally turn on stubs (mock mode)
+    };
+
+    // The Swagger document (require it, build it programmatically, fetch it from a URL, ...)
+    const spec = fs.readFileSync(path.join(__dirname, "api", "swagger.yaml"), "utf8");
+    const swaggerDoc = jsyaml.safeLoad(spec);
+
+    const app = connect();
+
+    // Initialize the Swagger middleware
+    swaggerTools.initializeMiddleware(swaggerDoc, middleware => {
+        // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
+        app.use(middleware.swaggerMetadata());
+
+        // Validate Swagger requests
+        app.use(middleware.swaggerValidator());
+
+        // Route validated requests to appropriate controller
+        app.use(middleware.swaggerRouter(options));
+
+        // Serve the Swagger documents and Swagger UI
+        app.use(middleware.swaggerUi());
+
+        const listener = () => {
+            console.log(`Your server is listening on port ${serverPort} (${protocol}://localhost:${serverPort})`);
+            console.log(`Swagger-ui is available on ${protocol}://localhost:${serverPort}/docs`);
+        };
+
+        if (protocol === "http") {
+            http.createServer(app).listen(serverPort, listener);
+        } else {
+            https.createServer(serverOptions, app).listen(listener);
+        }
+    });
+}

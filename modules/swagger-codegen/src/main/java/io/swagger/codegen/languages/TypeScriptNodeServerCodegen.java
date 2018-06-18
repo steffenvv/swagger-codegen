@@ -54,6 +54,8 @@ public class TypeScriptNodeServerCodegen extends TypeScriptNodeClientCodegen imp
         supportingFiles.add(new SupportingFile("swagger.mustache", "src" + File.separator + "api", "swagger.yaml"));
         
         writeOptional(outputFolder, new SupportingFile("index.mustache", "src", "index.ts"));
+        writeOptional(outputFolder, new SupportingFile("client.mustache", "src", "client.ts"));
+        writeOptional(outputFolder, new SupportingFile("server.mustache", "src", "server.ts"));
         writeOptional(outputFolder, new SupportingFile("README.mustache", "", "README.md"));
         writeOptional(outputFolder, new SupportingFile("prettierrc.mustache", "", ".prettierrc"));
         
