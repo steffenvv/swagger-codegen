@@ -116,7 +116,7 @@ const primitives = [
 
 export class ObjectSerializer {
     public static findCorrectType(data: any, expectedType: string): string {
-        if (data == undefined) {
+        if (data === undefined) {
             return expectedType;
         } else if (primitives.indexOf(expectedType.toLowerCase()) !== -1) {
             return expectedType;
