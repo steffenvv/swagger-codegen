@@ -27,7 +27,7 @@ export function makeResponseDataFromError(ex: any): ResponseData<any> {
     return { kind: "Error", error, code };
 }
 
-export function writeJson<T>(response: any, responseData: ResponseData<T>) {
+export function writeJson<T>(response: any, responseData: ResponseData<T>): void {
     let payload: string;
     let code: number;
 
