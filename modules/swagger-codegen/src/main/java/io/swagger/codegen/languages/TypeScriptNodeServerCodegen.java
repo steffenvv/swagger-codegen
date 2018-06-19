@@ -28,10 +28,12 @@ import java.util.regex.Pattern;
 public class TypeScriptNodeServerCodegen extends TypeScriptNodeClientCodegen implements CodegenConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(TypeScriptNodeServerCodegen.class);
     public static final String SERVER_PORT = "serverPort";
+    public static final String DEFAULT_SOURCE_FOLDER = "src";
 
     protected String apiVersion = "1.0.0";
     protected String projectName = "swagger-server";
     protected String defaultServerPort = "8080";
+    protected String sourceFolder = DEFAULT_SOURCE_FOLDER;
 
     public TypeScriptNodeServerCodegen() {
         super();
@@ -48,18 +50,8 @@ public class TypeScriptNodeServerCodegen extends TypeScriptNodeClientCodegen imp
 
         additionalProperties.put("apiVersion", apiVersion);
         
-        supportingFiles.add(new SupportingFile("models-index.mustache", "src" + File.separator + "models", "index.ts"));
-        supportingFiles.add(new SupportingFile("services-index.mustache", "src" + File.separator + "services", "index.ts"));
-        supportingFiles.add(new SupportingFile("writer.mustache", "src" + File.separator + "utils", "writer.ts"));
-        supportingFiles.add(new SupportingFile("swagger.mustache", "src" + File.separator + "api", "swagger.yaml"));
-        
-        writeOptional(outputFolder, new SupportingFile("index.mustache", "src", "index.ts"));
-        writeOptional(outputFolder, new SupportingFile("client.mustache", "src", "client.ts"));
-        writeOptional(outputFolder, new SupportingFile("server.mustache", "src", "server.ts"));
-        writeOptional(outputFolder, new SupportingFile("README.mustache", "", "README.md"));
-        writeOptional(outputFolder, new SupportingFile("prettierrc.mustache", "", ".prettierrc"));
-        
         cliOptions.add(new CliOption(SERVER_PORT, "TCP port to listen on."));
+        cliOptions.add(new CliOption(CodegenConstants.SOURCE_FOLDER, CodegenConstants.SOURCE_FOLDER_DESC).defaultValue(DEFAULT_SOURCE_FOLDER));
     }
 
     @Override
@@ -77,8 +69,23 @@ public class TypeScriptNodeServerCodegen extends TypeScriptNodeClientCodegen imp
         if (npmName != null) {
         	supportingFiles.add(new SupportingFile("npmrc", getPackageRootDirectory(), ".npmrc"));        	
         }
-    }    
+        
+        if (additionalProperties.containsKey(CodegenConstants.SOURCE_FOLDER)) {
+            this.sourceFolder = ((String) additionalProperties.get(CodegenConstants.SOURCE_FOLDER)).replace("/", File.separator);
+        }       
 
+        supportingFiles.add(new SupportingFile("models-index.mustache", this.sourceFolder + File.separator + "models", "index.ts"));
+        supportingFiles.add(new SupportingFile("services-index.mustache", this.sourceFolder + File.separator + "services", "index.ts"));
+        supportingFiles.add(new SupportingFile("writer.mustache", this.sourceFolder + File.separator + "utils", "writer.ts"));
+        supportingFiles.add(new SupportingFile("swagger.mustache", this.sourceFolder + File.separator + "api", "swagger.yaml"));
+        
+        writeOptional(outputFolder, new SupportingFile("index.mustache", this.sourceFolder, "index.ts"));
+        writeOptional(outputFolder, new SupportingFile("client.mustache", this.sourceFolder, "client.ts"));
+        writeOptional(outputFolder, new SupportingFile("server.mustache", this.sourceFolder, "server.ts"));
+        writeOptional(outputFolder, new SupportingFile("README.mustache", "", "README.md"));
+        writeOptional(outputFolder, new SupportingFile("prettierrc.mustache", "", ".prettierrc"));        
+    }    
+    
     @Override
     public String apiPackage() {
         return "controllers";
