@@ -1,0 +1,18 @@
+{
+  "name": "swagger-codegen",
+  "version": "0.0.1",
+  "description": "Steffen's fork of swagger-codegen",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/steffenvv/swagger-codegen.git"
+  },
+  "author": "stvikenv@microsoft.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/steffenvv/swagger-codegen/issues"
+  },
+  "homepage": "https://github.com/steffenvv/swagger-codegen#readme"
+}
