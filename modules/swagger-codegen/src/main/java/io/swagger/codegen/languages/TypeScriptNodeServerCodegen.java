@@ -71,7 +71,7 @@ public class TypeScriptNodeServerCodegen extends TypeScriptNodeClientCodegen imp
         }
         
         if (additionalProperties.containsKey(CodegenConstants.SOURCE_FOLDER)) {
-            this.sourceFolder = ((String) additionalProperties.get(CodegenConstants.SOURCE_FOLDER)).replace("/", File.separator);
+            this.sourceFolder = additionalProperties.get(CodegenConstants.SOURCE_FOLDER).toString().replace("/", File.separator);
         }       
 
         supportingFiles.add(new SupportingFile("models-index.mustache", this.sourceFolder + File.separator + "models", "index.ts"));
@@ -140,12 +140,12 @@ public class TypeScriptNodeServerCodegen extends TypeScriptNodeClientCodegen imp
     
     @Override
     public String apiFileFolder() {
-        return outputFolder + File.separator + "src" + File.separator + apiPackage().replace('.', File.separatorChar);
+        return outputFolder + File.separator + this.sourceFolder + File.separator + apiPackage().replace('.', File.separatorChar);
     }
 
     @Override
     public String modelFileFolder() {
-        return outputFolder + File.separator + "src" + File.separator + "models" + File.separator + modelPackage().replace('.', File.separatorChar);
+        return outputFolder + File.separator + this.sourceFolder + File.separator + "models" + File.separator + modelPackage().replace('.', File.separatorChar);
     }
 
     @Override
